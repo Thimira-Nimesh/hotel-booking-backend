@@ -1,4 +1,4 @@
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 
 const categorySchema = mongoose.Schema({
   name: {
@@ -15,5 +15,5 @@ const categorySchema = mongoose.Schema({
   },
 });
 
-const Category = model(categorySchema, "categories");
+const Category = mongoose.model("categories", categorySchema);
 export default Category;
