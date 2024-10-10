@@ -15,6 +15,11 @@ const roomSchema = mongoose.Schema({
   cleanBy: {
     type: String,
   },
+  bookingStatus: {
+    type: String,
+    enum: ["Available", "Booked", "Out of Service"],
+    default: "Available",
+  },
 });
 
 const Room = mongoose.model("rooms", roomSchema);

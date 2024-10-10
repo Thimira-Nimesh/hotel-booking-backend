@@ -9,8 +9,8 @@ import {
 
 const roomsRouter = express.Router();
 
-// roomsRouter.get("/", getRooms);
-roomsRouter.get("/", searchRooms);
+roomsRouter.get("/", getRooms);
+roomsRouter.get("/search", searchRooms);
 roomsRouter.post("/", postRooms);
 roomsRouter.put("/", updateRooms);
 roomsRouter.delete("/", deleteRooms);
