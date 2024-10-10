@@ -5,6 +5,7 @@ import roomsRouter from "./Routes/roomsRouter.js";
 import roomboyRouter from "./Routes/RoomboyRouter.js";
 import galleryRouter from "./Routes/GalleryRoutes.js";
 import categoryRouter from "./Routes/CategoryRoutes.js";
+import bookingRouter from "./Routes/BookingsRoutes.js";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
@@ -63,6 +64,7 @@ app.use("/api/rooms", roomsRouter);
 app.use("/api/roomboys", roomboyRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/category", categoryRouter);
+app.use("/api/bookings", bookingRouter);
 
 app.listen(5000, (req, res) => {
   console.log("Server is Running on port 5000");

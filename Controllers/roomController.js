@@ -1,5 +1,16 @@
 import Room from "../Models/Rooms.js";
 
+export function searchRooms(req, res) {
+  const room = req.body;
+  const roomno = req.body.roomId;
+  Room.findOne({ roomno: roomno }).then(() => {
+    res.json({
+      message: "Room Found",
+      room: room,
+    });
+  });
+}
+
 export function getRooms(req, res) {
   Room.find()
     .then((roomslist) => {
@@ -15,18 +26,18 @@ export function getRooms(req, res) {
 }
 
 export function postRooms(req, res) {
-  const user = req.body.user;
+  const user = req.user;
 
   if (user == null) {
     res.status(404).json({
-      message: "You need to login before Create Rooms",
+      message: "You need to login before Add Rooms",
     });
     return;
   }
 
   if (user?.userType != "admin") {
     res.status(403).json({
-      message: "You don't have permission to Create Rooms",
+      message: "You don't have permission to add Rooms",
     });
     return;
   }
