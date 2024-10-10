@@ -2,6 +2,7 @@ import Gallery from "../Models/galleryModel.js";
 
 export function postGallery(req, res) {
   const user = req.user;
+  console.log(user);
 
   if (user == null) {
     res.status(403).json({
@@ -10,7 +11,7 @@ export function postGallery(req, res) {
     return;
   }
 
-  if (user?.userType != "admin") {
+  if (user.userType != "admin") {
     res.status(403).json({
       message: "You do not have permission to create gallery item",
     });

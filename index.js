@@ -62,7 +62,7 @@ app.use("/api/users", userRouter);
 app.use("/api/rooms", roomsRouter);
 app.use("/api/roomboys", roomboyRouter);
 app.use("/api/gallery", galleryRouter);
-app.use("api/category", categoryRouter);
+app.use("/api/category", categoryRouter);
 
 app.listen(5000, (req, res) => {
   console.log("Server is Running on port 5000");

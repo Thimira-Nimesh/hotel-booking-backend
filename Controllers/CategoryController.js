@@ -26,8 +26,9 @@ export function postCategory(req, res) {
 
   if (user?.userType != "admin") {
     res.status(403).json({
-      message: "You don not have permission to create a Category",
+      message: "You do not have permission to create a Category",
     });
+    return;
   }
 
   const category = req.body;
@@ -45,4 +46,64 @@ export function postCategory(req, res) {
         message: "Category adding Failure",
       });
     });
+}
+
+export function deleteCategory(req, res) {
+  const user = req.user;
+
+  if (user == null) {
+    res.status(403).json({
+      message: "You need to login before delete category",
+    });
+    return;
+  }
+
+  if (user.userType != "admin") {
+    res.status(403).json({
+      message: "You don't have permission to Delete Category",
+    });
+    return;
+  } else {
+    const category = req.body;
+    Category.deleteOne({ name: category.name })
+      .then(() => {
+        res.json({
+          message: "Category Deleted Successfully",
+        });
+      })
+      .catch(() => {
+        res.json({
+          message: "Category Deletion Failed",
+        });
+      });
+  }
+}
+
+export function updateCategory(req, res) {
+  const user = req.user;
+  if (user == null) {
+    res.status(404).json({
+      message: "You need to Login before update category",
+    });
+    return;
+  }
+
+  if (user?.userType != "admin") {
+    res.status(403).json({
+      message: "You do not have permission to update categories",
+    });
+  } else {
+    const category = req.body;
+    Category.findOneAndUpdate({ name: category.name })
+      .then(() => {
+        res.json({
+          message: "Category Updated Successfully",
+        });
+      })
+      .catch(() => {
+        res.json({
+          message: "Category updation Failed",
+        });
+      });
+  }
 }

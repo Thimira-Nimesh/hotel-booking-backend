@@ -121,6 +121,7 @@ export function loginUser(req, res) {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          userType: user.userType,
         };
         const token = jwt.sign(payload, "secretkey", { expiresIn: "40h" });
 
