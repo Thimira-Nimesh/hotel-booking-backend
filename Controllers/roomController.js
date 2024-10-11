@@ -71,19 +71,47 @@ export function updateRooms(req, res) {
   });
 }
 
+// export function deleteRooms(req, res) {
+
+//   const room = req.params.roomId;
+//   Room.deleteOne({
+//     roomId: room,
+//   })
+//     .then(() => {
+//       res.json({
+//         message: "Room Deleted Successfully",
+//       });
+//     })
+//     .catch(() => {
+//       res.json({
+//         message: "Room Deletion Failed",
+//       });
+//     });
+// }
+
 export function deleteRooms(req, res) {
-  const roomId = req.body.room;
-  Room.deleteOne({
-    roomId: roomId,
-  })
-    .then(() => {
+  const roomId = req.params.roomId;
+
+  Room.findOne({ roomId: roomId })
+    .then((room) => {
+      if (!room) {
+        return res.status(404).json({
+          message: "Invalid room ID. Room not found.",
+        });
+      }
+
+      return Room.deleteOne({ roomId: roomId });
+    })
+    .then((deleteResult) => {
       res.json({
         message: "Room Deleted Successfully",
+        deleteResult,
       });
     })
-    .catch(() => {
-      res.json({
-        message: "Room Deletion Failed",
+    .catch((error) => {
+      res.status(500).json({
+        message: "An error occurred during deletion.",
+        error: error.message,
       });
     });
 }

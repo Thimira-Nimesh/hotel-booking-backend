@@ -7,9 +7,10 @@ export function getCategory(req, res) {
         message: categorylist,
       });
     })
-    .catch(() => {
+    .catch((err) => {
       res.json({
         message: "categorylist error",
+        err,
       });
     });
 }
@@ -36,14 +37,16 @@ export function postCategory(req, res) {
   const newCategory = new Category(category);
   newCategory
     .save()
-    .then(() => {
+    .then((result) => {
       res.json({
         message: "New Category Added",
+        result: result,
       });
     })
-    .catch(() => {
+    .catch((err) => {
       res.json({
         message: "Category adding Failure",
+        error: err,
       });
     });
 }
@@ -64,16 +67,16 @@ export function deleteCategory(req, res) {
     });
     return;
   } else {
-    const category = req.body;
-    Category.deleteOne({ name: category.name })
+    const name = req.params.name;
+    Category.deleteOneAndUpdate({ name: name })
       .then(() => {
         res.json({
           message: "Category Deleted Successfully",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         res.json({
-          message: "Category Deletion Failed",
+          message: err,
         });
       });
   }
@@ -106,4 +109,27 @@ export function updateCategory(req, res) {
         });
       });
   }
+}
+
+export function getCategoryByName(req, res) {
+  const name = req.params.name;
+  Category.findOne({ name: name })
+    .then((result) => {
+      if (result == null) {
+        res.json({
+          message: "Cannot find the Category",
+        });
+      } else {
+        res.json({
+          message: "Category Found",
+          result: result,
+        });
+      }
+    })
+    .catch((err) => {
+      req.json({
+        message: "Category Error",
+        err,
+      });
+    });
 }

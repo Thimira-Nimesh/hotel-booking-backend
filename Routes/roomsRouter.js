@@ -13,6 +13,6 @@ roomsRouter.get("/", getRooms);
 roomsRouter.get("/search", searchRooms);
 roomsRouter.post("/", postRooms);
 roomsRouter.put("/", updateRooms);
-roomsRouter.delete("/", deleteRooms);
+roomsRouter.delete("/:roomId", deleteRooms);
 
 export default roomsRouter;

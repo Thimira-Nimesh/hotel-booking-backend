@@ -4,14 +4,24 @@ const categorySchema = mongoose.Schema({
   name: {
     type: String,
     Required: true,
+    unique: true,
   },
+
+  price: {
+    type: Number,
+    Required: true,
+  },
+  features: [
+    {
+      type: String,
+    },
+  ],
   description: {
     type: String,
     Required: true,
   },
-  price: {
+  image: {
     type: String,
-    Required: true,
   },
 });
 
