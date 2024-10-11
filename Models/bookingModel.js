@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const bookingSchema = mongoose.Schema({
-  bookingID: {
-    type: String,
+  bookingId: {
+    type: Number,
     required: true,
   },
   roomId: {
