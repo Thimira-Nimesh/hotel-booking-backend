@@ -131,7 +131,31 @@ export function deleteBookings(req, res) {
 }
 
 export function updateBookings(req, res) {
-  res.json({
-    message: "update Booking",
-  });
+  const user = req.user;
+  if (!user) {
+    res.json({
+      message: "You need to Login",
+    });
+    return;
+  }
+
+  if (user.userType != "admin") {
+    res.json({
+      message: "You do not have permission",
+    });
+  } else {
+    const bookingId = req.params.bookingId;
+    Bookings.findOneAndupdate({ bookingId: bookingId }).then((result) => {
+      if (!result) {
+        res.json({
+          message: "Invalid booking Id...",
+        });
+      } else {
+        res.json({
+          message: "Booking Id Updated Successfully",
+          result,
+        });
+      }
+    });
+  }
 }
