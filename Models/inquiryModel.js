@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const inquirySchema = mongoose.Schema({
   inquiryId: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   },

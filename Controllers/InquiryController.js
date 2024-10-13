@@ -55,22 +55,27 @@ export function postInquiery(req, res) {
     res.json({
       message: "You need to Login",
     });
-  } else {
-    const inquiery = req.body;
-    const newInquiery = Inquiry(inquiery);
-    newInquiery
-      .save()
-      .then(() => {
-        res.json({
-          message: "Your inquiry added successfully...",
-        });
-      })
-      .catch((err) => {
-        res.json({
-          message: "Inquiery Adding Failed..",
-        });
-      });
+    return;
   }
+
+  const inquiery = req.body;
+
+  console.log(inquiery);
+  const newInquiery = new Inquiry(inquiery);
+
+  newInquiery
+    .save()
+    .then(() => {
+      res.json({
+        message: "Your inquiry added successfully...",
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Inquiery Adding Failed..",
+        err,
+      });
+    });
 }
 
 export function updateInquiery(req, res) {
