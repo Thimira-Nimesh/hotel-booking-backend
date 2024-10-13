@@ -1,20 +1,5 @@
 import Room from "../Models/Rooms.js";
 
-export function searchRooms(req, res) {
-  const room = req.body;
-
-  Room.findOne({ roomId: room.roomId }).then((result) => {
-    if (result == null) {
-      res.json({ message: "room not found" });
-    } else {
-      res.json({
-        message: "Room Found",
-        room: result,
-      });
-    }
-  });
-}
-
 export function getRooms(req, res) {
   Room.find()
     .then((roomslist) => {

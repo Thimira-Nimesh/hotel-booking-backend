@@ -13,6 +13,6 @@ bookingRouter.get("/", getBookings);
 bookingRouter.delete("/:bookingId", deleteBookings);
 bookingRouter.get("/:bookingId", getBookingsById);
 bookingRouter.post("/", postBookings);
-bookingRouter.put("/", updateBookings);
+bookingRouter.put("/:bookingId", updateBookings);
 
 export default bookingRouter;

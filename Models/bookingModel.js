@@ -21,6 +21,10 @@ const bookingSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
+  status: {
+    type: String,
+    default: "Pending",
+  },
   guest: {
     firstName: {
       type: String,

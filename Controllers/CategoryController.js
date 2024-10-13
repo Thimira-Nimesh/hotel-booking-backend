@@ -25,7 +25,7 @@ export function postCategory(req, res) {
     return;
   }
 
-  if (user?.userType != "admin") {
+  if (user.userType != "admin") {
     res.status(403).json({
       message: "You do not have permission to create a Category",
     });
@@ -68,7 +68,7 @@ export function deleteCategory(req, res) {
     return;
   } else {
     const name = req.params.name;
-    Category.deleteOneAndUpdate({ name: name })
+    Category.deleteOne({ name: name })
       .then(() => {
         res.json({
           message: "Category Deleted Successfully",
@@ -77,35 +77,6 @@ export function deleteCategory(req, res) {
       .catch((err) => {
         res.json({
           message: err,
-        });
-      });
-  }
-}
-
-export function updateCategory(req, res) {
-  const user = req.user;
-  if (user == null) {
-    res.status(404).json({
-      message: "You need to Login before update category",
-    });
-    return;
-  }
-
-  if (user?.userType != "admin") {
-    res.status(403).json({
-      message: "You do not have permission to update categories",
-    });
-  } else {
-    const category = req.body;
-    Category.findOneAndUpdate({ name: category.name })
-      .then(() => {
-        res.json({
-          message: "Category Updated Successfully",
-        });
-      })
-      .catch(() => {
-        res.json({
-          message: "Category updation Failed",
         });
       });
   }
@@ -130,6 +101,58 @@ export function getCategoryByName(req, res) {
       req.json({
         message: "Category Error",
         err,
+      });
+    });
+}
+
+export function updateCategory(req, res) {
+  const user = req.user;
+
+  if (user == null) {
+    return res.status(404).json({
+      message: "You need to Login before updating category",
+    });
+  }
+
+  if (user.userType !== "admin") {
+    return res.status(403).json({
+      message: "You do not have permission to update categories",
+    });
+  }
+
+  const currentName = req.params.name;
+  const newName = req.body.name;
+
+  Category.findOne({ name: currentName })
+    .then((category) => {
+      if (!category) {
+        return res.json({
+          message: "Invalid Category..",
+        });
+      }
+
+      Category.findOneAndUpdate(
+        { name: currentName },
+        { name: newName },
+        { new: true }
+      )
+        .then((updatedCategory) => {
+          res.json({
+            message: "Category Updated Successfully",
+            updatedCategory,
+          });
+        })
+        .catch((err) => {
+          res.json({
+            message: "Category update failed",
+            error: err,
+          });
+        });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Error finding category",
+        error: err,
       });
     });
 }

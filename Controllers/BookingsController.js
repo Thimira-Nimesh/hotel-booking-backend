@@ -132,30 +132,52 @@ export function deleteBookings(req, res) {
 
 export function updateBookings(req, res) {
   const user = req.user;
+
   if (!user) {
-    res.json({
+    return res.json({
       message: "You need to Login",
     });
-    return;
   }
 
-  if (user.userType != "admin") {
-    res.json({
+  if (user.userType !== "admin") {
+    return res.json({
       message: "You do not have permission",
     });
-  } else {
-    const bookingId = req.params.bookingId;
-    Bookings.findOneAndupdate({ bookingId: bookingId }).then((result) => {
+  }
+
+  const bookingId = req.params.bookingId;
+  const newStatus = req.body.status;
+
+  Bookings.findOne({ bookingId: bookingId })
+    .then((result) => {
       if (!result) {
-        res.json({
+        return res.json({
           message: "Invalid booking Id...",
         });
-      } else {
-        res.json({
-          message: "Booking Id Updated Successfully",
-          result,
-        });
       }
+
+      Bookings.findOneAndUpdate(
+        { bookingId: bookingId },
+        { status: newStatus },
+        { new: true } // Return the updated document
+      )
+        .then((updatedResult) => {
+          res.json({
+            message: "Booking status updated successfully",
+            updatedResult,
+          });
+        })
+        .catch((err) => {
+          res.json({
+            message: "Failed to update booking status.",
+            error: err,
+          });
+        });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Error finding booking.",
+        error: err,
+      });
     });
-  }
 }

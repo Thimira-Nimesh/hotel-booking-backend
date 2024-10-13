@@ -9,6 +9,7 @@ import {
 
 const categoryRouter = express.Router();
 
+categoryRouter.put("/:name", updateCategory);
 categoryRouter.get("/", getCategory);
 categoryRouter.post("/", postCategory);
 categoryRouter.get("/:name", getCategoryByName);

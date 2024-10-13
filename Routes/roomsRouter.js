@@ -1,7 +1,6 @@
 import express from "express";
 import {
   getRooms,
-  searchRooms,
   postRooms,
   updateRooms,
   deleteRooms,
@@ -11,7 +10,6 @@ import {
 const roomsRouter = express.Router();
 
 roomsRouter.get("/", getRooms);
-roomsRouter.get("/search", searchRooms);
 roomsRouter.get("/:roomId", getRoomById);
 roomsRouter.post("/", postRooms);
 roomsRouter.put("/", updateRooms);
