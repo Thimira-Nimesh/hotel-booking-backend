@@ -1,4 +1,5 @@
 import Room from "../Models/Rooms.js";
+import { isAdminValid } from "./userController.js";
 
 export function getRooms(req, res) {
   Room.find()
@@ -14,19 +15,33 @@ export function getRooms(req, res) {
     });
 }
 
-export function postRooms(req, res) {
-  const user = req.user;
-
-  if (user == null) {
-    res.status(404).json({
-      message: "You need to login before Add Rooms",
+export function getRoomById(req, res) {
+  const roomId = req.params.roomId;
+  Room.findOne({ roomId: roomId })
+    .then((result) => {
+      if (result == null) {
+        res.json({
+          message: "Room Does not exist..Invalid Room Id",
+        });
+      } else {
+        res.json({
+          message: "Room Found",
+          result,
+        });
+      }
+    })
+    .catch((err) => {
+      res.json({
+        message: "Room Id Error...",
+        err,
+      });
     });
-    return;
-  }
+}
 
-  if (user?.userType != "admin") {
-    res.status(403).json({
-      message: "You don't have permission to add Rooms",
+export function postRooms(req, res) {
+  if (!isAdminValid(req)) {
+    res.json({
+      message: "Unautorized",
     });
     return;
   }
@@ -50,13 +65,13 @@ export function postRooms(req, res) {
     });
 }
 
-export function updateRooms(req, res) {
-  res.json({
-    message: "This is update Room function",
-  });
-}
-
 export function deleteRooms(req, res) {
+  if (!isAdminValid(req)) {
+    res.json({
+      message: "Unautorized",
+    });
+    return;
+  }
   const roomId = req.params.roomId;
 
   Room.findOne({ roomId: roomId })
@@ -83,24 +98,24 @@ export function deleteRooms(req, res) {
     });
 }
 
-export function getRoomById(req, res) {
+export function updateRooms(req, res) {
+  if (!isAdminValid(req)) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
   const roomId = req.params.roomId;
-  Room.findOne({ roomId: roomId })
-    .then((result) => {
-      if (result == null) {
-        res.json({
-          message: "Room Does not exist..Invalid Room Id",
-        });
-      } else {
-        res.json({
-          message: "Room Found",
-          result,
-        });
-      }
+
+  Room.findOneAndUpdate({ roomId: roomId }, req.body)
+    .then(() => {
+      res.json({
+        message: "Room details Updated Successfully",
+      });
     })
     .catch((err) => {
       res.json({
-        message: "Room Id Error...",
+        message: "Room updation Failed...",
         err,
       });
     });

@@ -81,3 +81,14 @@ export function loginUser(req, res) {
     }
   });
 }
+
+export function isAdminValid(req) {
+  const user = req.user;
+  if (!user) {
+    return false;
+  }
+  if (user.userType != "admin") {
+    return false;
+  }
+  return true;
+}

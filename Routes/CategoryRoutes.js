@@ -15,6 +15,4 @@ categoryRouter.post("/", postCategory);
 categoryRouter.get("/:name", getCategoryByName);
 categoryRouter.delete("/:name", deleteCategory);
 
-categoryRouter.put("/", updateCategory);
-
 export default categoryRouter;

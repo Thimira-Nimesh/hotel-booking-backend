@@ -1,4 +1,5 @@
 import Category from "../Models/categoryModel.js";
+import { isAdminValid } from "./userController.js";
 
 export function getCategory(req, res) {
   Category.find()
@@ -16,18 +17,9 @@ export function getCategory(req, res) {
 }
 
 export function postCategory(req, res) {
-  const user = req.user;
-
-  if (user == null) {
+  if (!isAdminValid(req)) {
     res.status(403).json({
-      message: "Login before create a Category",
-    });
-    return;
-  }
-
-  if (user.userType != "admin") {
-    res.status(403).json({
-      message: "You do not have permission to create a Category",
+      message: "Unauthorized",
     });
     return;
   }
@@ -52,34 +44,25 @@ export function postCategory(req, res) {
 }
 
 export function deleteCategory(req, res) {
-  const user = req.user;
-
-  if (user == null) {
+  if (!isAdminValid(req)) {
     res.status(403).json({
-      message: "You need to login before delete category",
+      message: "Unauthorized",
     });
     return;
   }
 
-  if (user.userType != "admin") {
-    res.status(403).json({
-      message: "You don't have permission to Delete Category",
-    });
-    return;
-  } else {
-    const name = req.params.name;
-    Category.deleteOne({ name: name })
-      .then(() => {
-        res.json({
-          message: "Category Deleted Successfully",
-        });
-      })
-      .catch((err) => {
-        res.json({
-          message: err,
-        });
+  const name = req.params.name;
+  Category.deleteOne({ name: name })
+    .then(() => {
+      res.json({
+        message: "Category Deleted Successfully",
       });
-  }
+    })
+    .catch((err) => {
+      res.json({
+        message: err,
+      });
+    });
 }
 
 export function getCategoryByName(req, res) {
@@ -106,52 +89,24 @@ export function getCategoryByName(req, res) {
 }
 
 export function updateCategory(req, res) {
-  const user = req.user;
-
-  if (user == null) {
-    return res.status(404).json({
-      message: "You need to Login before updating category",
+  if (!isAdminValid(req)) {
+    res.status(403).json({
+      message: "Unauthorized",
     });
-  }
-
-  if (user.userType !== "admin") {
-    return res.status(403).json({
-      message: "You do not have permission to update categories",
-    });
+    return;
   }
 
   const currentName = req.params.name;
-  const newName = req.body.name;
 
-  Category.findOne({ name: currentName })
-    .then((category) => {
-      if (!category) {
-        return res.json({
-          message: "Invalid Category..",
-        });
-      }
-
-      Category.findOneAndUpdate(
-        { name: currentName },
-        { name: newName },
-        { new: true }
-      )
-        .then((updatedCategory) => {
-          res.json({
-            message: "Category Updated Successfully",
-            updatedCategory,
-          });
-        })
-        .catch((err) => {
-          res.json({
-            message: "Category update failed",
-            error: err,
-          });
-        });
+  Category.findOneAndUpdate({ name: currentName }, req.body)
+    .then(() => {
+      res.json({
+        message: "Category Updated Successfully",
+      });
     })
     .catch((err) => {
       res.json({
-        message: "Error finding category",
+        message: "Category update failed",
         error: err,
       });
     });

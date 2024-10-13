@@ -2,23 +2,36 @@ import mongoose from "mongoose";
 
 const roomSchema = mongoose.Schema({
   roomId: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   },
-  roomType: {
+  category: {
     type: String,
+    required: true,
   },
-  roomBoy: {
-    type: String,
+  maxGuests: {
+    type: Number,
+    required: true,
+    default: 3,
   },
-  cleanBy: {
-    type: String,
+  available: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
-  bookingStatus: {
+  img: [
+    {
+      type: String,
+    },
+  ],
+  specialDescription: {
     type: String,
-    enum: ["Available", "Booked", "Out of Service"],
-    default: "Available",
+    default: "",
+  },
+  notes: {
+    type: String,
+    default: "",
   },
 });
 
