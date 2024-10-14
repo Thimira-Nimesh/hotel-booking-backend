@@ -5,6 +5,12 @@ import { isCustomerValid } from "./userController.js";
 export function getBookings(req, res) {
   const user = req.user;
   console.log(user);
+  if (!user) {
+    res.json({
+      message: "You need to Login before view bookings",
+    });
+    return;
+  }
   if (user.userType == "admin") {
     Bookings.find()
       .then((bookingsList) => {
