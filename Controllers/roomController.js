@@ -48,9 +48,7 @@ export function postRooms(req, res) {
 
   const room = req.body;
   console.log(room);
-
   const newRoom = new Room(room);
-
   newRoom
     .save()
     .then(() => {
@@ -116,6 +114,22 @@ export function updateRooms(req, res) {
     .catch((err) => {
       res.json({
         message: "Room updation Failed...",
+        err,
+      });
+    });
+}
+
+export function getRoomsByCategory(req, res) {
+  const category = req.params.category;
+  Room.find({ category: category })
+    .then((result) => {
+      res.json({
+        message: result,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Error..",
         err,
       });
     });

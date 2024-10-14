@@ -92,3 +92,14 @@ export function isAdminValid(req) {
   }
   return true;
 }
+
+export function isCustomerValid(req) {
+  const user = req.user;
+  if (!user) {
+    return false;
+  }
+  if (user.userType != "customer") {
+    return false;
+  }
+  return true;
+}

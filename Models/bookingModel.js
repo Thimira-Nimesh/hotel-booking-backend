@@ -4,14 +4,22 @@ const bookingSchema = mongoose.Schema({
   bookingId: {
     type: Number,
     required: true,
+    unique: true,
   },
   roomId: {
+    type: Number,
+    required: true,
+  },
+  email: {
     type: String,
     required: true,
   },
-  roomType: {
+  status: {
     type: String,
-    required: true,
+    default: "Pending",
+  },
+  reason: {
+    type: String,
   },
   checkInDate: {
     type: Date,
@@ -21,27 +29,12 @@ const bookingSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  status: {
+  notes: {
     type: String,
-    default: "Pending",
   },
-  guest: {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
+  timestamp: {
+    type: Date,
+    default: Date.now,
   },
 });
 

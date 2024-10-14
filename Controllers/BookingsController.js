@@ -1,21 +1,11 @@
 import Bookings from "../Models/bookingModel.js";
+import { isAdminValid } from "./userController.js";
+import { isCustomerValid } from "./userController.js";
 
 export function getBookings(req, res) {
   const user = req.user;
-
-  if (user == null) {
-    res.json({
-      message: "You need to login before view bookingList",
-    });
-    return;
-  }
-
-  if (user.userType != "admin") {
-    res.json({
-      message: "You do not have permission to view booking list",
-    });
-    return;
-  } else {
+  console.log(user);
+  if (user.userType == "admin") {
     Bookings.find()
       .then((bookingsList) => {
         res.json({
@@ -27,70 +17,88 @@ export function getBookings(req, res) {
           message: "User BookingList error",
         });
       });
+  } else if (user.userType == "customer") {
+    Bookings.find({ email: user.email })
+      .then((result) => {
+        res.json({
+          message: result,
+        });
+      })
+      .catch((err) => {
+        res.json({
+          message: "Booking list Error...",
+          err,
+        });
+      });
   }
 }
 
 export function getBookingsById(req, res) {
-  const user = req.user;
-
-  if (user == null) {
+  if (!isAdminValid(req)) {
     res.json({
-      message: "You need to login before view bookingList",
+      message: "unAuthorized",
     });
     return;
   }
 
-  if (user.userType != "admin") {
-    res.json({
-      message: "You do not have permission to view booking list",
-    });
-    return;
-  } else {
-    const bookingId = req.params.bookingId;
-    Bookings.findOne({ bookingId: bookingId })
-      .then((result) => {
-        if (!result) {
-          res.json({
-            message: "Booking Id Does not Exist",
-          });
-        } else {
-          res.json({
-            message: result,
-          });
-        }
-      })
-      .catch(() => {
+  const bookingId = req.params.bookingId;
+  Bookings.findOne({ bookingId: bookingId })
+    .then((result) => {
+      if (!result) {
         res.json({
-          message: "User BookingList error",
+          message: "Booking Id Does not Exist",
         });
+      } else {
+        res.json({
+          message: result,
+        });
+      }
+    })
+    .catch(() => {
+      res.json({
+        message: "User BookingList error",
       });
-  }
+    });
 }
 
 export function postBookings(req, res) {
-  const user = req.user;
-
-  if (user == null) {
-    res.status(403).json({
-      message: "You need to Login before make a booking",
+  if (!isCustomerValid(req)) {
+    res.json({
+      message: "Unauthorized",
     });
-  } else {
-    const bookings = req.body;
-    const newBookings = Bookings(bookings);
-
-    newBookings
-      .save()
-      .then(() => {
-        res.json({
-          message: "Booking Successfull",
-        });
-      })
-      .catch(() => {
-        res.json({
-          message: "Booking Failure...Try Again",
-        });
-      });
+    return;
   }
+  const startingId = 1000;
+  Bookings.countDocuments({})
+    .then((count) => {
+      const newId = startingId + count + 1;
+      const newBookings = new Bookings({
+        bookingId: newId,
+        roomId: req.body.roomId,
+        email: req.user.email,
+        checkInDate: req.body.checkInDate,
+        checkOutDate: req.body.checkOutDate,
+      });
+      newBookings
+        .save()
+        .then((result) => {
+          res.json({
+            message: "Booking Successfull",
+            result,
+          });
+        })
+        .catch(() => {
+          res.json({
+            message: "Booking Failure...Try Again",
+          });
+        });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Booking Failure...Try Again",
+        err,
+      });
+    });
 }
 
 export function deleteBookings(req, res) {
