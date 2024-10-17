@@ -47,37 +47,46 @@ export function loginUser(req, res) {
   const credentials = req.body;
 
   User.findOne({ email: credentials.email }).then((user) => {
+    console.log(user);
     if (user == null) {
       res.json({
         message: "user not found",
       });
+      return;
+    }
+
+    if (user.disabled == true) {
+      res.json({
+        message: "User Disabled..Cannot Login",
+      });
+      return;
+    }
+
+    const isPasswordValid = bcrypt.compareSync(
+      credentials.password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      res.json({
+        message: "Password is Incorrect",
+      });
     } else {
-      const isPasswordValid = bcrypt.compareSync(
-        credentials.password,
-        user.password
-      );
+      const payload = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userType: user.userType,
+      };
+      const token = jwt.sign(payload, process.env.JWT_KEY, {
+        expiresIn: "40h",
+      });
 
-      if (!isPasswordValid) {
-        res.json({
-          message: "Password is Incorrect",
-        });
-      } else {
-        const payload = {
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          userType: user.userType,
-        };
-        const token = jwt.sign(payload, process.env.JWT_KEY, {
-          expiresIn: "40h",
-        });
-
-        res.json({
-          message: "user Found",
-          user: user,
-          token: token,
-        });
-      }
+      res.json({
+        message: "user Found",
+        user: user,
+        token: token,
+      });
     }
   });
 }
@@ -102,4 +111,28 @@ export function isCustomerValid(req) {
     return false;
   }
   return true;
+}
+
+export function bandUsers(req, res) {
+  if (!isAdminValid(req)) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
+  const email = req.user.email;
+
+  User.findOneAndUpdate({ email: email }, req.body)
+    .then((result) => {
+      res.json({
+        message: "User Status Updated",
+        result,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Disable Error",
+        err,
+      });
+    });
 }
