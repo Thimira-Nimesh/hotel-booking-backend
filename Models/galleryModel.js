@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const gallerySchema = mongoose.Schema({
+  galleryId: {
+    type: Number,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

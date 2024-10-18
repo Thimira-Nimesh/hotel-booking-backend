@@ -1,20 +1,5 @@
 import Feedback from "../Models/feedbackModel.js";
-
-export function searchFeedback(req, res) {
-  const feed = req.body;
-  Feedback.findOne({ feedbackId: feed.feedbackId }).then((result) => {
-    if (result == null) {
-      res.json({
-        message: "feedback not found",
-      });
-    } else {
-      res.json({
-        message: "Feedback found",
-        feedback: result,
-      });
-    }
-  });
-}
+import { isAdminValid, isCustomerValid } from "./userController.js";
 
 export function getFeedback(req, res) {
   Feedback.find()
@@ -30,8 +15,53 @@ export function getFeedback(req, res) {
     });
 }
 
-export function updateFeedback(req, res) {
+export function getFeedbackByEmail(req, res) {
+  const user = req.user;
+  if (!user) {
+    res.json({
+      message: "You need to login",
+    });
+    return;
+  }
+  Feedback.find({ email: user.email }).then((result) => {
+    if (!result) {
+      res.json({
+        message: "cannot find any feedbacks...",
+      });
+    } else {
+      res.json({
+        message: result,
+      });
+    }
+  });
+}
+
+export function postFeedback(req, res) {
+  if (!isCustomerValid(req)) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
+
   const feedback = req.body;
+  const newFeed = new Feedback(feedback);
+  newFeed
+    .save()
+    .then((createdfeedback) => {
+      res.json({
+        message: "Feedback Added Successfully",
+        feedback: createdfeedback,
+      });
+    })
+    .catch(() => {
+      res.json({
+        message: "Feedback Added Failure...",
+      });
+    });
+}
+
+export function updateFeedback(req, res) {
   const user = req.user;
 
   if (user.userType != "admin") {
@@ -39,7 +69,7 @@ export function updateFeedback(req, res) {
       message: "You Don'thave permission to Approve Feedbacks",
     });
   } else {
-    Feedback.findOneAndUpdate({ approved: feedback.approved })
+    Feedback.findOneAndUpdate(req.body)
       .then(() => {
         res.json({
           message: "Feedback Approved",
@@ -53,54 +83,15 @@ export function updateFeedback(req, res) {
   }
 }
 
-export function postFeedback(req, res) {
-  const feedback = req.body;
-  const user = req.user;
-  if (user == null) {
+export function deleteFeedback(req, res) {
+  if (!isAdminValid(req)) {
     res.json({
-      message: "You need to login before add feedback",
+      message: "Unauthorized",
     });
     return;
   }
-  if (!feedback.approved) {
-    res.json({
-      message: "Your Feedback Declined by Admin",
-    });
-  } else {
-    const newFeed = new Feedback(feedback);
-    newFeed
-      .save()
-      .then((createdfeedback) => {
-        res.json({
-          message: "Feedback Added Successfully",
-          feedback: createdfeedback,
-        });
-      })
-      .catch(() => {
-        res.json({
-          message: "Feedback Added Failure...",
-        });
-      });
-  }
 
-  //   const feed = req.body;
-  //   const newFeed = new Feedback(feed);
-  //   newFeed
-  //     .save()
-  //     .then(() => {
-  //       res.json({
-  //         message: "New Feedback Added",
-  //       });
-  //     })
-  //     .catch(() => {
-  //       res.json({
-  //         message: "Feedback adding failure",
-  //       });
-  //     });
-}
-
-export function deleteFeedback(req, res) {
-  const feedback = req.body;
+  const feedback = req.params.feedbackId;
   Feedback.deleteOne({ feedbackId: feedback.feedbackId })
     .then(() => {
       res.json({
