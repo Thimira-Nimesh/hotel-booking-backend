@@ -15,7 +15,7 @@ export function getFeedback(req, res) {
     });
 }
 
-export function getFeedbackByEmail(req, res) {
+export function getFeedbackById(req, res) {
   const user = req.user;
   if (!user) {
     res.json({
@@ -23,7 +23,7 @@ export function getFeedbackByEmail(req, res) {
     });
     return;
   }
-  Feedback.find({ email: user.email }).then((result) => {
+  Feedback.find({ userId: user.userId }).then((result) => {
     if (!result) {
       res.json({
         message: "cannot find any feedbacks...",

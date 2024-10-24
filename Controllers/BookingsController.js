@@ -195,3 +195,24 @@ export function updateBookings(req, res) {
       });
     });
 }
+
+export function getBook(req, res) {
+  if (!isAdminValid(res)) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
+  const bookId = req.params.bookingId;
+  Bookings.findOne({ bookingId: bookId }).then((result) => {
+    if (!result) {
+      res.json({
+        message: "Invalid BookingId",
+      });
+    } else {
+      res.json({
+        message: result,
+      });
+    }
+  });
+}

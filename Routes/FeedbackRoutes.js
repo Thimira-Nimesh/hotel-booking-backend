@@ -4,13 +4,13 @@ import {
   postFeedback,
   updateFeedback,
   deleteFeedback,
-  getFeedbackByEmail,
+  getFeedbackById,
 } from "../Controllers/feedbackController.js";
 
 const feedbackRouter = express.Router();
 
 feedbackRouter.get("/", getFeedback);
-feedbackRouter.get("/", getFeedbackByEmail);
+feedbackRouter.get("/", getFeedbackById);
 feedbackRouter.post("/", postFeedback);
 feedbackRouter.put("/", updateFeedback);
 feedbackRouter.delete("/:feedbackId", deleteFeedback);

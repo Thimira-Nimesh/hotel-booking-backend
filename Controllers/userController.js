@@ -18,6 +18,27 @@ export function getUser(req, res) {
     });
 }
 
+export function getUserById(req, res) {
+  if (!isAdminValid(req)) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
+  const user = req.params.userId;
+  User.findOne({ userId: user.userId }).then((resUser) => {
+    if (!resUser) {
+      res.json({
+        message: "Invalid UserId...",
+      });
+    } else {
+      res.json({
+        message: resUser,
+      });
+    }
+  });
+}
+
 export function postUser(req, res) {
   const user = req.body;
 
@@ -31,14 +52,16 @@ export function postUser(req, res) {
   const newUser = new User(user);
   newUser
     .save()
-    .then(() => {
+    .then((result) => {
       res.json({
         message: "User Created Successfully",
+        result,
       });
     })
-    .catch(() => {
+    .catch((e) => {
       res.json({
         message: "User Creation Failed",
+        e,
       });
     });
 }
