@@ -3,9 +3,9 @@ import { isAdminValid } from "./userController.js";
 
 export function getCategory(req, res) {
   Category.find()
-    .then((categorylist) => {
+    .then((categories) => {
       res.json({
-        message: categorylist,
+        categories,
       });
     })
     .catch((err) => {
@@ -44,12 +44,12 @@ export function postCategory(req, res) {
 }
 
 export function deleteCategory(req, res) {
-  if (!isAdminValid(req)) {
-    res.status(403).json({
-      message: "Unauthorized",
-    });
-    return;
-  }
+  // if (!isAdminValid(req)) {
+  //   res.status(403).json({
+  //     message: "Unauthorized",
+  //   });
+  //   return;
+  // }
 
   const name = req.params.name;
   Category.deleteOne({ name: name })

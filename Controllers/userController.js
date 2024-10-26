@@ -5,10 +5,25 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export function getUser(req, res) {
+  const user = req.body.user;
+  console.log(user);
+  if (!user) {
+    res.json({
+      message: "User not found",
+    });
+  } else {
+    res.json({
+      message: "message",
+      user: user,
+    });
+  }
+}
+
+export function getUserList(req, res) {
   User.find()
     .then((usersList) => {
       res.json({
-        list: usersList,
+        usersList,
       });
     })
     .catch(() => {
@@ -158,4 +173,44 @@ export function bandUsers(req, res) {
         err,
       });
     });
+}
+
+export function deleteUser(req, res) {
+  // if (!isAdminValid) {
+  //   res.json({
+  //     message: "Unauthorized",
+  //   });
+  //   return;
+  // }
+
+  const user = req.body.user;
+  User.deleteOne({ email: user.email }).then(() => {
+    res.json({
+      message: "User Deleted Successfully",
+    });
+  });
+}
+
+export function getUserByname(req, res) {
+  const firstName = req.params.firstName;
+  User.findOne({ firstName: firstName }).then((result) => {
+    if (!result) {
+      res.json({
+        message: "User not found",
+      });
+    } else {
+      res.json({
+        result,
+      });
+    }
+  });
+}
+
+export function deleteUserByname(req, res) {
+  const firstName = req.params.firstName;
+  User.deleteOne({ firstName: firstName }).then(() => {
+    res.json({
+      message: "User Deleted Successfully",
+    });
+  });
 }
