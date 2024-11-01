@@ -214,3 +214,10 @@ export function deleteUserByname(req, res) {
     });
   });
 }
+
+// export function postImage(req,res){
+//   const user = req.user;
+
+//   User.
+
+// }

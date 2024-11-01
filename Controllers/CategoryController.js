@@ -17,12 +17,12 @@ export function getCategory(req, res) {
 }
 
 export function postCategory(req, res) {
-  if (!isAdminValid(req)) {
-    res.status(403).json({
-      message: "Unauthorized",
-    });
-    return;
-  }
+  // if (!isAdminValid(req)) {
+  //   res.status(403).json({
+  //     message: "Unauthorized",
+  //   });
+  //   return;
+  // }
 
   const category = req.body;
 

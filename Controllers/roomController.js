@@ -5,7 +5,7 @@ export function getRooms(req, res) {
   Room.find()
     .then((roomslist) => {
       res.json({
-        List: roomslist,
+        roomslist,
       });
     })
     .catch(() => {
@@ -39,12 +39,12 @@ export function getRoomById(req, res) {
 }
 
 export function postRooms(req, res) {
-  if (!isAdminValid(req)) {
-    res.json({
-      message: "Unautorized",
-    });
-    return;
-  }
+  // if (!isAdminValid(req)) {
+  //   res.json({
+  //     message: "Unautorized",
+  //   });
+  //   return;
+  // }
 
   const room = req.body;
   console.log(room);
@@ -64,12 +64,12 @@ export function postRooms(req, res) {
 }
 
 export function deleteRooms(req, res) {
-  if (!isAdminValid(req)) {
-    res.json({
-      message: "Unautorized",
-    });
-    return;
-  }
+  // if (!isAdminValid(req)) {
+  //   res.json({
+  //     message: "Unautorized",
+  //   });
+  //   return;
+  // }
   const roomId = req.params.roomId;
 
   Room.findOne({ roomId: roomId })

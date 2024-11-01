@@ -23,6 +23,10 @@ const userSchema = mongoose.Schema({
     required: true,
     default: "customer",
   },
+
+  image: {
+    type: String,
+  },
   whatsapp: {
     type: String,
     required: true,
