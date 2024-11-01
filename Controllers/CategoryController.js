@@ -17,12 +17,12 @@ export function getCategory(req, res) {
 }
 
 export function postCategory(req, res) {
-  // if (!isAdminValid(req)) {
-  //   res.status(403).json({
-  //     message: "Unauthorized",
-  //   });
-  //   return;
-  // }
+  if (!isAdminValid(req)) {
+    res.status(403).json({
+      message: "Unauthorized",
+    });
+    return;
+  }
 
   const category = req.body;
 
@@ -44,17 +44,19 @@ export function postCategory(req, res) {
 }
 
 export function deleteCategory(req, res) {
-  // if (!isAdminValid(req)) {
-  //   res.status(403).json({
-  //     message: "Unauthorized",
-  //   });
-  //   return;
-  // }
+  if (!isAdminValid(req)) {
+    res.status(403).json({
+      message: "Unauthorized",
+    });
+    return;
+  }
 
   const name = req.params.name;
+  console.log(name);
   Category.deleteOne({ name: name })
-    .then(() => {
+    .then((result) => {
       res.json({
+        result,
         message: "Category Deleted Successfully",
       });
     })
@@ -67,6 +69,7 @@ export function deleteCategory(req, res) {
 
 export function getCategoryByName(req, res) {
   const name = req.params.name;
+
   Category.findOne({ name: name })
     .then((result) => {
       if (result == null) {
@@ -96,9 +99,9 @@ export function updateCategory(req, res) {
     return;
   }
 
-  const currentName = req.params.name;
+  const name = req.params.name;
 
-  Category.findOneAndUpdate({ name: currentName }, req.body)
+  Category.findOneAndUpdate({ name: name }, req.body)
     .then(() => {
       res.json({
         message: "Category Updated Successfully",

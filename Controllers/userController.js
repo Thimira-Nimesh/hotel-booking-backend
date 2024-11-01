@@ -130,7 +130,7 @@ export function loginUser(req, res) {
 }
 
 export function isAdminValid(req) {
-  const user = req.user;
+  const user = req.body.user;
   if (!user) {
     return false;
   }
@@ -141,7 +141,7 @@ export function isAdminValid(req) {
 }
 
 export function isCustomerValid(req) {
-  const user = req.user;
+  const user = req.body.user;
   if (!user) {
     return false;
   }
