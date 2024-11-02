@@ -29,7 +29,7 @@ export function getGallery(req, res) {
   Gallery.find()
     .then((gallerylist) => {
       res.json({
-        message: gallerylist,
+        gallerylist,
       });
     })
     .catch(() => {
