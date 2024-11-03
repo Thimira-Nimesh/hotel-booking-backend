@@ -176,12 +176,12 @@ export function bandUsers(req, res) {
 }
 
 export function deleteUser(req, res) {
-  // if (!isAdminValid) {
-  //   res.json({
-  //     message: "Unauthorized",
-  //   });
-  //   return;
-  // }
+  if (!isAdminValid) {
+    res.json({
+      message: "Unauthorized",
+    });
+    return;
+  }
 
   const user = req.body.user;
   User.deleteOne({ email: user.email }).then(() => {

@@ -74,7 +74,8 @@ export function deleteGallery(req, res) {
     return;
   }
   const galleryId = req.params.galleryId;
-  Gallery.DeleteOne({ galleryId: galleryId })
+  console.log(galleryId);
+  Gallery.deleteOne({ galleryId: galleryId })
     .then((result) => {
       if (!result) {
         res.json({
