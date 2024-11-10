@@ -70,29 +70,32 @@ export function deleteRooms(req, res) {
     });
     return;
   }
+
+  //   const roomId = req.params.roomId;
+  //   Room.deleteOne({ roomId: roomId })
+  //     .then((deleteResult) => {
+  //       res.json({
+  //         message: "Room Deleted Successfully",
+  //         deleteResult,
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       res.status(500).json({
+  //         message: "An error occurred during deletion.",
+  //         error: error.message,
+  //       });
+  //     });
+  // }
+
   const roomId = req.params.roomId;
-
-  Room.findOne({ roomId: roomId })
-    .then((room) => {
-      if (room == null) {
-        return res.status(404).json({
-          message: "Invalid room ID. Room not found.",
-        });
-      }
-
-      return Room.deleteOne({ roomId: roomId });
-    })
-    .then((deleteResult) => {
+  Room.deleteOne({ roomId: roomId })
+    .then(() => {
       res.json({
         message: "Room Deleted Successfully",
-        deleteResult,
       });
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: "An error occurred during deletion.",
-        error: error.message,
-      });
+    .catch((err) => {
+      res.json({ message: "Room deletion error.", err });
     });
 }
 

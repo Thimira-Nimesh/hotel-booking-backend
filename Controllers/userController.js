@@ -14,16 +14,16 @@ export function getUser(req, res) {
   } else {
     res.json({
       message: "message",
-      user: user,
+      user,
     });
   }
 }
 
 export function getUserList(req, res) {
   User.find()
-    .then((usersList) => {
+    .then((userlist) => {
       res.json({
-        usersList,
+        userlist,
       });
     })
     .catch(() => {
@@ -40,17 +40,12 @@ export function getUserById(req, res) {
     });
     return;
   }
-  const user = req.params.userId;
-  User.findOne({ userId: user.userId }).then((resUser) => {
-    if (!resUser) {
-      res.json({
-        message: "Invalid UserId...",
-      });
-    } else {
-      res.json({
-        message: resUser,
-      });
-    }
+  const id = req.params.id;
+  User.findById(id).then((res) => {
+    res.json({
+      message: "User Found",
+      res,
+    });
   });
 }
 
