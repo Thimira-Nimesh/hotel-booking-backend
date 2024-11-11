@@ -92,12 +92,12 @@ export function getCategoryByName(req, res) {
 }
 
 export function updateCategory(req, res) {
-  // if (!isAdminValid(req)) {
-  //   res.status(403).json({
-  //     message: "Unauthorized",
-  //   });
-  //   return;
-  // }
+  if (!isAdminValid(req)) {
+    res.status(403).json({
+      message: "Unauthorized",
+    });
+    return;
+  }
 
   const name = req.params.name;
 

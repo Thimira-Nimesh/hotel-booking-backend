@@ -3,7 +3,7 @@ import { isAdminValid } from "./userController.js";
 import { isCustomerValid } from "./userController.js";
 
 export function getBookings(req, res) {
-  const user = req.user;
+  const user = req.body.user;
   console.log(user);
   if (!user) {
     res.json({
@@ -68,12 +68,13 @@ export function getBookingsById(req, res) {
 }
 
 export function postBookings(req, res) {
-  if (!isCustomerValid(req)) {
-    res.json({
-      message: "Unauthorized",
-    });
-    return;
-  }
+  // if (!isCustomerValid(req)) {
+  //   res.json({
+  //     message: "Unauthorized",
+  //   });
+  //   return;
+  // }
+
   const startingId = 1000;
   Bookings.countDocuments({})
     .then((count) => {
@@ -81,7 +82,7 @@ export function postBookings(req, res) {
       const newBookings = new Bookings({
         bookingId: newId,
         roomId: req.body.roomId,
-        email: req.user.email,
+        email: req.body.user.email,
         checkInDate: req.body.checkInDate,
         checkOutDate: req.body.checkOutDate,
       });
@@ -108,7 +109,7 @@ export function postBookings(req, res) {
 }
 
 export function deleteBookings(req, res) {
-  const user = req.user;
+  const user = req.body.user;
   if (user == null) {
     res.json({
       message: "You need to login",
@@ -145,7 +146,7 @@ export function deleteBookings(req, res) {
 }
 
 export function updateBookings(req, res) {
-  const user = req.user;
+  const user = req.body.user;
 
   if (!user) {
     return res.json({
@@ -215,4 +216,32 @@ export function getBook(req, res) {
       });
     }
   });
+}
+
+export function retrieveBookingByDate(req, res) {
+  const checkInDate = req.body.checkInDate;
+  const checkOutDate = req.body.checkOutDate;
+  console.log(checkInDate);
+  console.log(checkOutDate);
+
+  Bookings.find({
+    checkInDate: {
+      $gt: new Date(checkInDate),
+    },
+    checkOutDate: {
+      $lt: new Date(checkOutDate),
+    },
+  })
+    .then((result) => {
+      res.json({
+        message: "Filtered Successfully",
+        result: result,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: "Failed to get Filtered Bookings",
+        err,
+      });
+    });
 }
