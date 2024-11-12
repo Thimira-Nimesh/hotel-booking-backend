@@ -226,7 +226,7 @@ export function retrieveBookingByDate(req, res) {
 
   Bookings.find({
     checkInDate: {
-      $gt: new Date(checkInDate),
+      $gte: new Date(checkInDate),
     },
     checkOutDate: {
       $lt: new Date(checkOutDate),
@@ -244,4 +244,28 @@ export function retrieveBookingByDate(req, res) {
         err,
       });
     });
+}
+
+export function createBookingUsingCategory(req, res) {
+  const checkInDate = new Date(req.body.checkInDate);
+  const checkOutDate = new Date(req.body.checkOutDate);
+
+  Bookings.find({
+    $or: [
+      {
+        checkInDate: {
+          $gte: checkInDate,
+          $lt: checkOutDate,
+        },
+      },
+      {
+        checkOutDate: {
+          $gt: checkInDate,
+          $lte: checkOutDate,
+        },
+      },
+    ],
+  }).then((res) => {
+    console.log(res);
+  });
 }
