@@ -1,4 +1,5 @@
 import Bookings from "../Models/bookingModel.js";
+import Room from "../Models/Rooms.js";
 import { isAdminValid } from "./userController.js";
 import { isCustomerValid } from "./userController.js";
 
@@ -265,7 +266,57 @@ export function createBookingUsingCategory(req, res) {
         },
       },
     ],
-  }).then((res) => {
-    console.log(res);
+  }).then((response) => {
+    const bookingOverLapping = response;
+    const rooms = [];
+
+    for (let i = 0; i < bookingOverLapping.length; i++) {
+      rooms.push(bookingOverLapping[i].roomId);
+    }
+
+    Room.find({
+      roomId: {
+        $nin: rooms,
+      },
+      category: req.body.category,
+    }).then((rooms) => {
+      if (rooms.length == 0) {
+        res.json({
+          message: "No Rooms Available",
+        });
+      } else {
+        const startingId = 1000;
+        Bookings.countDocuments({})
+          .then((count) => {
+            const newId = startingId + count + 1;
+            const newBookings = new Bookings({
+              bookingId: newId,
+              roomId: rooms[0].roomId,
+              email: req.body.user.email,
+              checkInDate: checkInDate,
+              checkOutDate: checkOutDate,
+            });
+            newBookings
+              .save()
+              .then((result) => {
+                res.json({
+                  message: "Booking Successfull",
+                  result,
+                });
+              })
+              .catch(() => {
+                res.json({
+                  message: "Booking Failure...Try Again",
+                });
+              });
+          })
+          .catch((err) => {
+            res.json({
+              message: "Booking Failure...Try Again",
+              err,
+            });
+          });
+      }
+    });
   });
 }
