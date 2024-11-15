@@ -71,22 +71,6 @@ export function deleteRooms(req, res) {
     return;
   }
 
-  //   const roomId = req.params.roomId;
-  //   Room.deleteOne({ roomId: roomId })
-  //     .then((deleteResult) => {
-  //       res.json({
-  //         message: "Room Deleted Successfully",
-  //         deleteResult,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       res.status(500).json({
-  //         message: "An error occurred during deletion.",
-  //         error: error.message,
-  //       });
-  //     });
-  // }
-
   const roomId = req.params.roomId;
   Room.deleteOne({ roomId: roomId })
     .then(() => {
@@ -133,6 +117,29 @@ export function getRoomsByCategory(req, res) {
     .catch((err) => {
       res.json({
         message: "Error..",
+        err,
+      });
+    });
+}
+
+export function getRoomsById(req, res) {
+  const roomId = req.params.roomId;
+
+  Room.find({ roomId: roomId })
+    .then((result) => {
+      if (result == null) {
+        res.json({
+          message: "Invalid RoomId.. Please try again..",
+        });
+      } else {
+        res.json({
+          result,
+        });
+      }
+    })
+    .catch((err) => {
+      res.json({
+        message: "Room Loading Error..",
         err,
       });
     });
