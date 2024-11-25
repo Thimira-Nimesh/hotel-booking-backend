@@ -2,6 +2,7 @@ import User from "../Models/users.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 dotenv.config();
 
 export function getUser(req, res) {
@@ -207,5 +208,20 @@ export function deleteUserByname(req, res) {
     res.json({
       message: "User Deleted Successfully",
     });
+  });
+}
+
+export function sendSampleEmail(req, res) {
+  const email = req.body.email;
+
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+    },
   });
 }
