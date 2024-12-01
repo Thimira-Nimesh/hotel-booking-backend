@@ -7,6 +7,7 @@ import {
   getUserList,
   getUserByname,
   deleteUserByname,
+  sendSampleEmail,
 } from "../Controllers/userController.js";
 
 const userRouter = express.Router();
@@ -18,5 +19,6 @@ userRouter.get("/:firstName", getUserByname);
 userRouter.delete("/:firstName", deleteUserByname);
 userRouter.put("/", bandUsers);
 userRouter.post("/login", loginUser);
+userRouter.post("/email", sendSampleEmail);
 
 export default userRouter;

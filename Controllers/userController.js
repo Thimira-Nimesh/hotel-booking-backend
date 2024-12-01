@@ -220,8 +220,34 @@ export function sendSampleEmail(req, res) {
     port: 587,
     secure: false,
     auth: {
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
+      user: "tnimesh12345@gmail.com",
+      pass: "tmkgqrkxklhezano",
     },
+    tls: {
+      rejectUnauthorized: false, // Allow self-signed certificates
+    },
+  });
+
+  const message = {
+    from: "tnimesh12345@gmail.com",
+    to: email,
+    subject: "SampleEmail",
+    text: "This is a sample Email",
+  };
+
+  transport.sendMail(message, (err, info) => {
+    if (!err) {
+      console.log(info);
+      res.json({
+        message: "Email sent successfully",
+        info: info,
+      });
+    } else {
+      console.log(err);
+      res.json({
+        message: "Email sent error",
+        info: err,
+      });
+    }
   });
 }
