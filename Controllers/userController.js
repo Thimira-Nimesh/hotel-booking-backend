@@ -3,22 +3,23 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
+import Otp from "../Models/otp.js";
 dotenv.config();
 
-export function getUser(req, res) {
-  const user = req.body.user;
-  console.log(user);
-  if (!user) {
-    res.json({
-      message: "User not found",
-    });
-  } else {
-    res.json({
-      message: "message",
-      user,
-    });
-  }
-}
+// export function getUser(req, res) {
+//   const user = req.body.user;
+//   console.log(user);
+//   if (!user) {
+//     res.json({
+//       message: "User not found",
+//     });
+//   } else {
+//     res.json({
+//       message: "message",
+//       user,
+//     });
+//   }
+// }
 
 export function getUserList(req, res) {
   User.find()
@@ -64,9 +65,18 @@ export function postUser(req, res) {
   newUser
     .save()
     .then((result) => {
-      res.json({
-        message: "User Created Successfully",
-        result,
+      //1000-9999 random number
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      const newOtp = new Otp({
+        email: user.email,
+        otp: otp,
+      });
+      newOtp.save().then(() => {
+        sendOtpEmail(user.email, otp);
+        res.json({
+          message: "User Created Successfully",
+          result,
+        });
       });
     })
     .catch((e) => {
@@ -211,9 +221,7 @@ export function deleteUserByname(req, res) {
   });
 }
 
-export function sendSampleEmail(req, res) {
-  const email = req.body.email;
-
+export function sendOtpEmail(email, otp) {
   const transport = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
@@ -231,23 +239,45 @@ export function sendSampleEmail(req, res) {
   const message = {
     from: "tnimesh12345@gmail.com",
     to: email,
-    subject: "SampleEmail",
-    text: "This is a sample Email",
+    subject: "OTP Validation",
+    text: "Your OTP code is " + otp,
   };
 
   transport.sendMail(message, (err, info) => {
     if (!err) {
       console.log(info);
-      res.json({
-        message: "Email sent successfully",
-        info: info,
-      });
     } else {
       console.log(err);
-      res.json({
-        message: "Email sent error",
-        info: err,
-      });
     }
   });
+}
+
+export function validateOtp(req, res) {
+  const otp = req.body.otp;
+  const email = req.body.email;
+
+  Otp.find({ email: email })
+    .sort({ date: -1 })
+    .then((otpList) => {
+      if (otpList.length == 0) {
+        res.json({
+          message: "Invalid OTP..",
+        });
+      } else {
+        const latestOtp = otpList[0];
+        if (latestOtp.otp == otp) {
+          User.findOneAndUpdate({ email: email }, { emailVarified: true }).then(
+            () => {
+              res.json({
+                message: "User email verified successfully..",
+              });
+            }
+          );
+        } else {
+          res.json({
+            message: "Invalid OTP..",
+          });
+        }
+      }
+    });
 }

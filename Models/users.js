@@ -29,20 +29,20 @@ const userSchema = mongoose.Schema({
   },
   whatsapp: {
     type: String,
-    required: true,
+    // required: true,
   },
   phone: {
     type: String,
-    required: true,
+    // required: true,
   },
   disabled: {
     type: Boolean,
-    required: true,
+    // required: true,
     default: false,
   },
   emailVerified: {
     type: Boolean,
-    required: true,
+    // required: true,
     default: false,
   },
 });
