@@ -20,17 +20,28 @@ dotenv.config();
 //     });
 //   }
 // }
-
 export function getUserList(req, res) {
+  // Extract pageSize and pageNumber from query parameters
+  const pageSize = parseInt(req.query.pageSize, 10) || 10; // Default page size is 10
+  const pageNumber = parseInt(req.query.pageNumber, 10) || 1; // Default page number is 1
+
+  // Calculate the skip and limit values for pagination
+  const skip = (pageNumber - 1) * pageSize;
+
   User.find()
+    .skip(skip) // Skip the documents for pagination
+    .limit(pageSize) // Limit the documents to the page size
     .then((userlist) => {
       res.json({
+        pageNumber,
+        pageSize,
         userlist,
       });
     })
-    .catch(() => {
-      res.json({
+    .catch((error) => {
+      res.status(500).json({
         message: "User List Error",
+        error: error.message,
       });
     });
 }
