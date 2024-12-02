@@ -22,8 +22,8 @@ dotenv.config();
 // }
 export function getUserList(req, res) {
   // Extract pageSize and pageNumber from query parameters
-  const pageSize = parseInt(req.query.pageSize, 10) || 10; // Default page size is 10
-  const pageNumber = parseInt(req.query.pageNumber, 10) || 1; // Default page number is 1
+  const pageSize = parseInt(req.body.pageSize, 10) || 10; // Default page size is 10
+  const pageNumber = parseInt(req.body.pageNumber, 10) || 1; // Default page number is 1
 
   // Calculate the skip and limit values for pagination
   const skip = (pageNumber - 1) * pageSize;
@@ -32,10 +32,17 @@ export function getUserList(req, res) {
     .skip(skip) // Skip the documents for pagination
     .limit(pageSize) // Limit the documents to the page size
     .then((userlist) => {
-      res.json({
-        pageNumber,
-        pageSize,
-        userlist,
+      User.countDocuments().then((totalCount) => {
+        res.json({
+          message: "Users Found",
+          userlist: userlist,
+          pagination: {
+            currentPage: pageNumber,
+            pageSize: pageSize,
+            totalUsers: totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+          },
+        });
       });
     })
     .catch((error) => {
